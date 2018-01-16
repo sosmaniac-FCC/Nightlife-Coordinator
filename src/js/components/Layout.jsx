@@ -42,7 +42,7 @@ class Layout extends Component {
                 <Switch>
                     <Route exact path="/" component={Main} />
                     <Route exact path="/search" render={(props) => {
-                        return <Spread {...props} entries={this.props.entries} fetching={this.props.fetching} toggleGoing={this.props.toggleGoing} />; }} />
+                        return <Spread {...props} entries={this.props.entries} fetching={this.props.fetching} toggleGoing={this.props.toggleGoing} error={this.props.error} />; }} />
                     <Route component={NotFound} />
                 </Switch>
                 <Route exact path={this.testRoute()} render={(props) => {
@@ -57,7 +57,8 @@ function mapStateToProps(state) {
     return {
         entries: state.entries.data,
         fetching: state.entries.fetching,
-        searchInput: state.inputs.searchInput
+        searchInput: state.inputs.searchInput,
+        error: state.entries.error
     };
 }
 

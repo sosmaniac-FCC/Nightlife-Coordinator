@@ -26336,7 +26336,7 @@ var Layout = function (_Component) {
                     null,
                     _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _Main2.default }),
                     _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/search', render: function render(props) {
-                            return _react2.default.createElement(_Spread2.default, _extends({}, props, { entries: _this2.props.entries, fetching: _this2.props.fetching, toggleGoing: _this2.props.toggleGoing }));
+                            return _react2.default.createElement(_Spread2.default, _extends({}, props, { entries: _this2.props.entries, fetching: _this2.props.fetching, toggleGoing: _this2.props.toggleGoing, error: _this2.props.error }));
                         } }),
                     _react2.default.createElement(_reactRouterDom.Route, { component: _NotFound2.default })
                 ),
@@ -26357,7 +26357,8 @@ function mapStateToProps(state) {
     return {
         entries: state.entries.data,
         fetching: state.entries.fetching,
-        searchInput: state.inputs.searchInput
+        searchInput: state.inputs.searchInput,
+        error: state.entries.error
     };
 }
 
@@ -26687,7 +26688,7 @@ var Spread = function (_Component) {
         value: function render() {
             var _this2 = this;
 
-            if (this.props.entries && !this.props.fetching) {
+            if (this.props.entries && !this.props.fetching && !this.props.error) {
                 this.props.entries.sort(function (a, b) {
                     var nameA = a.name.toUpperCase();
                     var nameB = b.name.toUpperCase();
@@ -26782,29 +26783,46 @@ var Spread = function (_Component) {
                     )
                 );
             } else {
-                return _react2.default.createElement(
-                    "div",
-                    { className: "preloader-wrapper big active", style: { marginTop: "10%", display: "block", margin: "10% auto 0 auto" } },
-                    _react2.default.createElement(
+                if (!this.props.error) {
+                    return _react2.default.createElement(
                         "div",
-                        { className: "spinner-layer spinner-blue" },
+                        { className: "preloader-wrapper big active", style: { marginTop: "10%", display: "block", margin: "10% auto 0 auto" } },
                         _react2.default.createElement(
                             "div",
-                            { className: "circle-clipper left" },
-                            _react2.default.createElement("div", { className: "circle" })
-                        ),
-                        _react2.default.createElement(
-                            "div",
-                            { className: "gap-patch" },
-                            _react2.default.createElement("div", { className: "circle" })
-                        ),
-                        _react2.default.createElement(
-                            "div",
-                            { className: "circle-clipper right" },
-                            _react2.default.createElement("div", { className: "circle" })
+                            { className: "spinner-layer spinner-blue" },
+                            _react2.default.createElement(
+                                "div",
+                                { className: "circle-clipper left" },
+                                _react2.default.createElement("div", { className: "circle" })
+                            ),
+                            _react2.default.createElement(
+                                "div",
+                                { className: "gap-patch" },
+                                _react2.default.createElement("div", { className: "circle" })
+                            ),
+                            _react2.default.createElement(
+                                "div",
+                                { className: "circle-clipper right" },
+                                _react2.default.createElement("div", { className: "circle" })
+                            )
                         )
-                    )
-                );
+                    );
+                } else {
+                    return _react2.default.createElement(
+                        "div",
+                        { className: "center-align" },
+                        _react2.default.createElement(
+                            "h6",
+                            null,
+                            "Uh oh! Looks like we have a problem..."
+                        ),
+                        _react2.default.createElement(
+                            "p",
+                            null,
+                            this.props.error
+                        )
+                    );
+                }
             }
         }
     }]);
@@ -26866,7 +26884,6 @@ function fetchEntries(query) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 var latitude = position.coords.latitude.toFixed(0);
                 var longitude = position.coords.longitude.toFixed(0);
-                console.log(latitude, longitude);
 
                 _jquery2.default.get('/businesses?latitude=' + latitude + '&longitude=' + longitude + '&term=' + query + '', function (businesses) {
                     var dataset = [];
@@ -26888,7 +26905,7 @@ function fetchEntries(query) {
                                         dispatch({ type: 'FETCH_ENTRIES_FULFILLED', dataset: dataset });
                                     }
                                 }).catch(function (error) {
-                                    dispatch({ type: 'FETCH_ENTRIES_ERRROR', error: '|==> ' + error });
+                                    dispatch({ type: 'FETCH_ENTRIES_ERROR', error: '|==> ' + error });
                                 });
                             });
                         });
@@ -26896,9 +26913,11 @@ function fetchEntries(query) {
                         dispatch({ type: 'FETCH_ENTRIES_FULFILLED', dataset: [] });
                     }
                 });
+            }, function (error) {
+                dispatch({ type: 'FETCH_ENTRIES_ERROR', error: 'Please enable geolocational tracking in your web browser settings.' });
             });
         } else {
-            dispatch({ type: 'FETCH_ENTRIES_ERROR', error: '|==> Geolocational data is not currently available. Please try again later...' });
+            dispatch({ type: 'FETCH_ENTRIES_ERROR', error: 'Geolocational data is not available in your web browser.' });
         }
     };
 }

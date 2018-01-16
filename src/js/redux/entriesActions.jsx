@@ -12,7 +12,6 @@ export function fetchEntries(query) {
             navigator.geolocation.getCurrentPosition((position) => {
                 const latitude = position.coords.latitude.toFixed(0);
                 const longitude = position.coords.longitude.toFixed(0);
-                console.log(latitude, longitude);
                 
                 $.get('/businesses?latitude=' + latitude + '&longitude=' + longitude + '&term=' + query + '', (businesses) => {
                     let dataset = [];
@@ -36,7 +35,7 @@ export function fetchEntries(query) {
                                     }
                                 })
                                 .catch((error) => {
-                                    dispatch({type: 'FETCH_ENTRIES_ERRROR', error: '|==> ' + error});
+                                    dispatch({type: 'FETCH_ENTRIES_ERROR', error: '|==> ' + error});
                                 });
                             });
                         });
@@ -45,10 +44,12 @@ export function fetchEntries(query) {
                         dispatch({type: 'FETCH_ENTRIES_FULFILLED', dataset: []});
                     }
                 });
+            }, (error) => {
+                dispatch({type: 'FETCH_ENTRIES_ERROR', error: 'Please enable geolocational tracking in your web browser settings.'});
             });
         }
         else {
-            dispatch({type: 'FETCH_ENTRIES_ERROR', error: '|==> Geolocational data is not currently available. Please try again later...'});
+            dispatch({type: 'FETCH_ENTRIES_ERROR', error: 'Geolocational data is not available in your web browser.'});
         }
     };
 }

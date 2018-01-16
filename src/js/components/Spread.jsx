@@ -11,7 +11,7 @@ export default class Spread extends Component {
     }
     
     render() {
-        if (this.props.entries && !this.props.fetching) {
+        if (this.props.entries && !this.props.fetching && !this.props.error) {
             this.props.entries.sort((a, b) => {
                 const nameA = a.name.toUpperCase();
                 const nameB = b.name.toUpperCase();
@@ -61,19 +61,29 @@ export default class Spread extends Component {
             );
         }
         else {
-            return (
-                <div className="preloader-wrapper big active" style={{marginTop: "10%", display: "block", margin: "10% auto 0 auto"}}>
-                    <div className="spinner-layer spinner-blue">
-                        <div className="circle-clipper left">
-                            <div className="circle"></div>
-                        </div><div className="gap-patch">
-                            <div className="circle"></div>
-                        </div><div className="circle-clipper right">
-                            <div className="circle"></div>
+            if (!this.props.error) {
+                return (
+                    <div className="preloader-wrapper big active" style={{marginTop: "10%", display: "block", margin: "10% auto 0 auto"}}>
+                        <div className="spinner-layer spinner-blue">
+                            <div className="circle-clipper left">
+                                <div className="circle"></div>
+                            </div><div className="gap-patch">
+                                <div className="circle"></div>
+                            </div><div className="circle-clipper right">
+                                <div className="circle"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            );
+                );
+            }
+            else {
+                return (
+                    <div className="center-align">
+                        <h6>Uh oh! Looks like we have a problem...</h6>
+                        <p>{this.props.error}</p>
+                    </div>
+                );
+            }
         }
     }
 }
