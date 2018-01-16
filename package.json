@@ -1,34 +1,57 @@
 {
-  "name": "clementinejs-fcc",
-  "version": "1.0.1",
-  "description": "The elegant and lightweight boilerplate for full stack JavaScript.",
+  "name": "Nightlife_Coordinator",
+  "version": "1.0.0",
+  "description": "Second try!",
   "main": "server.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/johnstonbl01/clementinejs-fcc"
   },
-  "homepage": "http://www.clementinejs.com/",
-  "bugs": "https://github.com/johnstonbl01/clementinejs-fcc/issues",
-  "keywords": [
-    "MongoDB",
-    "Mongoose",
-    "full stack",
-    "Express",
-    "Node",
-    "javascript",
-    "boilerplate"
-  ],
+  "homepage": "https://nightlife-coordination-attempt-2-sosmaniac.c9users.io",
   "scripts": {
-  "start": "node server.js"
+    "dev": "webpack-dev-server --content-base src --inline --hot --port 8080 --host 0.0.0.0",
+    "start": "node server.js"
   },
-  "author": "Blake Johnston",
+  "author": "John Simmons",
   "license": "MIT",
   "dependencies": {
-    "dotenv": "^1.2.0",
+    "axios": "^0.17.1",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "body-parser": "^1.18.2",
+    "compass-mixins": "^0.12.10",
+    "cors": "^2.8.4",
+    "css-loader": "^0.28.8",
+    "dotenv": "^4.0.0",
     "express": "^4.12.4",
     "express-session": "^1.11.3",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "file-loader": "^1.1.6",
+    "isomorphic-fetch": "^2.2.1",
+    "jquery": "^3.2.1",
     "mongoose": "^4.1.0",
+    "morgan": "^1.9.0",
+    "node-sass": "^4.7.2",
     "passport": "^0.3.0",
-    "passport-github": "^1.0.0"
-  }
+    "passport-twitter": "^1.0.4",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-redux": "^5.0.6",
+    "react-router-dom": "^4.2.2",
+    "react-twitter-auth": "0.0.10",
+    "redux": "^3.7.2",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.2.0",
+    "rollup-plugin-replace": "^2.0.0",
+    "sass-loader": "^6.0.6",
+    "script-loader": "^0.7.2",
+    "style-loader": "^0.19.1",
+    "url-loader": "^0.6.2",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.10.1"
+  },
+  "devDependencies": {}
 }
