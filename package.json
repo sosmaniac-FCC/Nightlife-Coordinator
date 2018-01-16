@@ -10,7 +10,7 @@
   "homepage": "https://nightlife-coordination-attempt-2-sosmaniac.c9users.io",
   "scripts": {
     "dev": "webpack-dev-server --content-base src --inline --hot --port 8080 --host 0.0.0.0",
-    "start": "node server.js"
+    "start": "webpack && node server.js"
   },
   "author": "John Simmons",
   "license": "MIT",

@@ -17,28 +17,33 @@ export function fetchEntries(query) {
                 $.get('/businesses?latitude=' + latitude + '&longitude=' + longitude + '&term=' + query + '', (businesses) => {
                     let dataset = [];
                     
-                    businesses.forEach((business, i) => {
-                        $.get('/reviews?id=' + business.id + '', (reviews) => {
-                            axios.get('/going?id=' + business.id)
-                            .then((people) => {
-                                dataset.push({
-                                    id: business.id,
-                                    name: business.name,
-                                    image: business.image_url,
-                                    url: business.url,
-                                    review: reviews[0] != undefined ? reviews[0].text : '...',
-                                    going: +people.data
+                    if (businesses.length > 0) {
+                        businesses.forEach((business, i) => {
+                            $.get('/reviews?id=' + business.id + '', (reviews) => {
+                                axios.get('/going?id=' + business.id)
+                                .then((people) => {
+                                    dataset.push({
+                                        id: business.id,
+                                        name: business.name,
+                                        image: business.image_url,
+                                        url: business.url,
+                                        review: reviews[0] != undefined ? reviews[0].text : '...',
+                                        going: +people.data
+                                    });
+                                    
+                                    if (i == businesses.length - 1) {
+                                        dispatch({type: 'FETCH_ENTRIES_FULFILLED', dataset: dataset});
+                                    }
+                                })
+                                .catch((error) => {
+                                    dispatch({type: 'FETCH_ENTRIES_ERRROR', error: '|==> ' + error});
                                 });
-                                
-                                if (i == businesses.length - 1) {
-                                    dispatch({type: 'FETCH_ENTRIES_FULFILLED', dataset: dataset});
-                                }
-                            })
-                            .catch((error) => {
-                                dispatch({type: 'FETCH_ENTRIES_ERRROR', error: '|==> ' + error});
                             });
                         });
-                    });
+                    }
+                    else {
+                        dispatch({type: 'FETCH_ENTRIES_FULFILLED', dataset: []});
+                    }
                 });
             });
         }

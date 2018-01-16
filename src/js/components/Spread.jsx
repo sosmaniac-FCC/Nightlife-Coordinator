@@ -62,7 +62,7 @@ export default class Spread extends Component {
         }
         else {
             return (
-                <div className="preloader-wrapper big active">
+                <div className="preloader-wrapper big active" style={{marginTop: "10%", display: "block", margin: "10% auto 0 auto"}}>
                     <div className="spinner-layer spinner-blue">
                         <div className="circle-clipper left">
                             <div className="circle"></div>

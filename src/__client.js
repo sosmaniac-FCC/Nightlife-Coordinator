@@ -26784,7 +26784,7 @@ var Spread = function (_Component) {
             } else {
                 return _react2.default.createElement(
                     "div",
-                    { className: "preloader-wrapper big active" },
+                    { className: "preloader-wrapper big active", style: { marginTop: "10%", display: "block", margin: "10% auto 0 auto" } },
                     _react2.default.createElement(
                         "div",
                         { className: "spinner-layer spinner-blue" },
@@ -26871,26 +26871,30 @@ function fetchEntries(query) {
                 _jquery2.default.get('/businesses?latitude=' + latitude + '&longitude=' + longitude + '&term=' + query + '', function (businesses) {
                     var dataset = [];
 
-                    businesses.forEach(function (business, i) {
-                        _jquery2.default.get('/reviews?id=' + business.id + '', function (reviews) {
-                            _axios2.default.get('/going?id=' + business.id).then(function (people) {
-                                dataset.push({
-                                    id: business.id,
-                                    name: business.name,
-                                    image: business.image_url,
-                                    url: business.url,
-                                    review: reviews[0] != undefined ? reviews[0].text : '...',
-                                    going: +people.data
-                                });
+                    if (businesses.length > 0) {
+                        businesses.forEach(function (business, i) {
+                            _jquery2.default.get('/reviews?id=' + business.id + '', function (reviews) {
+                                _axios2.default.get('/going?id=' + business.id).then(function (people) {
+                                    dataset.push({
+                                        id: business.id,
+                                        name: business.name,
+                                        image: business.image_url,
+                                        url: business.url,
+                                        review: reviews[0] != undefined ? reviews[0].text : '...',
+                                        going: +people.data
+                                    });
 
-                                if (i == businesses.length - 1) {
-                                    dispatch({ type: 'FETCH_ENTRIES_FULFILLED', dataset: dataset });
-                                }
-                            }).catch(function (error) {
-                                dispatch({ type: 'FETCH_ENTRIES_ERRROR', error: '|==> ' + error });
+                                    if (i == businesses.length - 1) {
+                                        dispatch({ type: 'FETCH_ENTRIES_FULFILLED', dataset: dataset });
+                                    }
+                                }).catch(function (error) {
+                                    dispatch({ type: 'FETCH_ENTRIES_ERRROR', error: '|==> ' + error });
+                                });
                             });
                         });
-                    });
+                    } else {
+                        dispatch({ type: 'FETCH_ENTRIES_FULFILLED', dataset: [] });
+                    }
                 });
             });
         } else {
