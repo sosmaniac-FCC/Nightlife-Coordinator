@@ -12,28 +12,6 @@ export default function reducer(state={
                 searchInput: action.newInput
             };
         }
-        case 'TOGGLE_GOING_LOGIN_START': {
-            return {
-                ...state,
-                loggingIn: true
-            };
-        }
-        case 'TOGGLE_GOING_LOGIN_FULFILLED': {
-            return {
-                ...state,
-                loggingIn: false,
-                loggedIn: true
-            };
-        }
-        case 'TOGGLE_GOING_LOGIN_ERROR': {
-            return {
-                ...state,
-                loggingIn: false,
-                loggedIn: false,
-                error: action.error
-            };
-        }
-        default:
-            return state;
+        default: return state;
     }
 }

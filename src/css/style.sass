@@ -1,16 +1,26 @@
 @import "compass"
 
+html, body
+    width: 100%
+    height: 100%
+    margin: 0px
+    padding: 0px
+    overflow-x: hidden
+
 body
     background-color: #ffe0b2
-    margin-bottom: 5%
-    
+    margin-bottom: 2.5%
+
+
 .fa-times, .fa-search
     &:hover
         color: white
         text-shadow: 0 0 10px black
 
+
 input[type="search"]:focus
     background-color: white
+
 
 .material-icons 
     font-family: 'Material Icons'
@@ -30,3 +40,29 @@ input[type="search"]:focus
     text-rendering: optimizeLegibility
     -moz-osx-font-smoothing: grayscale
     font-feature-settings: 'liga'
+    
+    
+.responsive-img
+    min-height: 350px
+    max-height: 600px
+    border: 3px solid #e57373 
+    border-top-style: none 
+    border-left-style: none 
+    border-bottom-style: none
+    
+
+// Responsive extension
+@media only screen and (max-width: 992px) and (min-width: 600px)
+    .brand-logo
+        font-size: 28px !important
+
+
+@media only screen and (max-width: 600px) and (min-width: 400px)
+    .brand-logo
+        font-size: 22px !important
+        
+        
+@media only screen and (max-width: 430px)
+    .brand-logo
+        font-size: 16px !important
+        

@@ -6,6 +6,12 @@ export default function reducer(state={
 }, action) {
     
     switch(action.type) {
+        case 'CLEAR_SPREAD': {
+            return {
+                ...state,
+                data: []
+            };
+        }
         case 'FETCH_ENTRIES_START': {
             return {
                 ...state,

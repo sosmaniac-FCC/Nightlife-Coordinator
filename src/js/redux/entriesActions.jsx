@@ -6,50 +6,48 @@ import authorization from '../../../config';
 
 export function fetchEntries(query) {
     return (dispatch) => {
-        dispatch({type: 'FETCH_ENTRIES_START'});
-        
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                const latitude = position.coords.latitude.toFixed(0);
-                const longitude = position.coords.longitude.toFixed(0);
+        try {
+            if (navigator.geolocation) {
+                dispatch({type: 'FETCH_ENTRIES_START'});
                 
-                $.get('/businesses?latitude=' + latitude + '&longitude=' + longitude + '&term=' + query + '', (businesses) => {
-                    let dataset = [];
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const latitude = position.coords.latitude.toFixed(0),
+                        longitude = position.coords.longitude.toFixed(0);
                     
-                    if (businesses.length > 0) {
-                        businesses.forEach((business, i) => {
-                            $.get('/reviews?id=' + business.id + '', (reviews) => {
-                                axios.get('/going?id=' + business.id)
-                                .then((people) => {
-                                    dataset.push({
-                                        id: business.id,
-                                        name: business.name,
-                                        image: business.image_url,
-                                        url: business.url,
-                                        review: reviews[0] != undefined ? reviews[0].text : '...',
-                                        going: +people.data
-                                    });
-                                    
-                                    if (i == businesses.length - 1) {
+                    if (query) {
+                        $.get('/businesses?latitude=' + latitude + '&longitude=' + longitude + '&term=' + query, businesses => {
+                            let dataset = [];
+                            
+                            if (businesses.length > 0) {
+                                Promise.all(businesses.map(business => axios.get(`/reviews?id=${business.id}`)))
+                                .then(reviews => {
+                                    Promise.all(businesses.map(business => axios.get(`/going?id=${business.id}`)))
+                                    .then(people => {
+                                        businesses.forEach((business, i) => dataset.push({
+                                            id: business.id,
+                                            name: business.name,
+                                            image: business.image_url,
+                                            url: business.url,
+                                            review: reviews[i][0] ? reviews[i][0].text : '',
+                                            going: +people[i].data
+                                        }));
+                                        
                                         dispatch({type: 'FETCH_ENTRIES_FULFILLED', dataset: dataset});
-                                    }
-                                })
-                                .catch((error) => {
-                                    dispatch({type: 'FETCH_ENTRIES_ERROR', error: '|==> ' + error});
+                                    }).catch(e => { throw e; });
+                                }).catch(error => { 
+                                    dispatch({type: 'FETCH_ENTRIES_ERROR', error});
                                 });
-                            });
+                            }
+                            else dispatch({type: 'FETCH_ENTRIES_FULFILLED', dataset: []});
                         });
-                    }
-                    else {
-                        dispatch({type: 'FETCH_ENTRIES_FULFILLED', dataset: []});
-                    }
-                });
-            }, (error) => {
-                dispatch({type: 'FETCH_ENTRIES_ERROR', error: 'Please enable geolocational tracking in your web browser settings.'});
-            });
-        }
-        else {
-            dispatch({type: 'FETCH_ENTRIES_ERROR', error: 'Geolocational data is not available in your web browser.'});
+                    } 
+                    else dispatch({type: 'FETCH_ENTRIES_FULFILLED', dataset: []});
+                }, e => { throw e; });
+            }
+            else throw 'Geolocational data is not available in your web browser.';
+        } 
+        catch (error) {
+            dispatch({type: 'FETCH_ENTRIES_ERROR', error});
         }
     };
 }
@@ -58,7 +56,7 @@ export function toggleGoing(businessId, arrayDisplay, index) {
     return (dispatch) => {
         axios.get('/status')
         .then((user) => {
-            if (user.data != "" && user.data.twitterId != undefined) {
+            if (user.data != "" && user.data.twitterId) {
                 const willDecrement = user.data.placesGoing.includes(businessId);
                 const newDataset = [];
                 for (let i = 0; i < arrayDisplay.length; i++) {
@@ -78,24 +76,17 @@ export function toggleGoing(businessId, arrayDisplay, index) {
                 $.post('/input', {type: willDecrement ? 'dec' : 'inc', businessId: businessId});
             }
             else {
-                dispatch({type: 'TOGGLE_GOING_LOGIN_START'});
-                
                 window.location.href = authorization.auth.appURL + '/auth/twitter';
-                
-                // need to figure out how to save application state
-                /*
-                axios.get('/auth')
-                .then((result) => {
-                    dispatch({type: 'TOGGLE_GOING_LOGIN_FULFILLED'});
-                })
-                .catch((error) => {
-                    dispatch({type: 'TOGGLE_GOING_LOGIN_ERROR'});
-                });
-                */
             }
         })
         .catch((error) => {
             dispatch({type: 'TOGGLE_GOING_ERROR', error: error});
         });
+    };
+}
+
+export function clearSpread() {
+    return (dispatch) => {
+        dispatch({type: 'CLEAR_SPREAD'});  
     };
 }

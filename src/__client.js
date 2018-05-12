@@ -26129,6 +26129,12 @@ function reducer() {
 
 
     switch (action.type) {
+        case 'CLEAR_SPREAD':
+            {
+                return _extends({}, state, {
+                    data: []
+                });
+            }
         case 'FETCH_ENTRIES_START':
             {
                 return _extends({}, state, {
@@ -26206,27 +26212,6 @@ function reducer() {
             {
                 return _extends({}, state, {
                     searchInput: action.newInput
-                });
-            }
-        case 'TOGGLE_GOING_LOGIN_START':
-            {
-                return _extends({}, state, {
-                    loggingIn: true
-                });
-            }
-        case 'TOGGLE_GOING_LOGIN_FULFILLED':
-            {
-                return _extends({}, state, {
-                    loggingIn: false,
-                    loggedIn: true
-                });
-            }
-        case 'TOGGLE_GOING_LOGIN_ERROR':
-            {
-                return _extends({}, state, {
-                    loggingIn: false,
-                    loggedIn: false,
-                    error: action.error
                 });
             }
         default:
@@ -26327,22 +26312,24 @@ var Layout = function (_Component) {
 
             return _react2.default.createElement(
                 'div',
-                { className: "container" },
-                _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: this.testRoute(), render: function render(props) {
-                        return _react2.default.createElement(_Header2.default, _extends({}, props, { searchInput: _this2.props.searchInput, handleSearch: _this2.handleSearch, fetching: _this2.props.fetching, fetchSearchInput: _this2.props.fetchSearchInput }));
-                    } }),
+                null,
                 _react2.default.createElement(
-                    _reactRouterDom.Switch,
-                    null,
-                    _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _Main2.default }),
-                    _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/search', render: function render(props) {
-                            return _react2.default.createElement(_Spread2.default, _extends({}, props, { entries: _this2.props.entries, fetching: _this2.props.fetching, toggleGoing: _this2.props.toggleGoing, error: _this2.props.error }));
+                    'div',
+                    { className: "container" },
+                    _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: this.testRoute(), render: function render(props) {
+                            return _react2.default.createElement(_Header2.default, _extends({}, props, { searchInput: _this2.props.searchInput, handleSearch: _this2.handleSearch, fetching: _this2.props.fetching, fetchSearchInput: _this2.props.fetchSearchInput, clearSpread: _this2.props.clearSpread }));
                         } }),
-                    _react2.default.createElement(_reactRouterDom.Route, { component: _NotFound2.default })
+                    _react2.default.createElement(
+                        _reactRouterDom.Switch,
+                        null,
+                        _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _Main2.default }),
+                        _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/search', render: function render(props) {
+                                return _react2.default.createElement(_Spread2.default, _extends({}, props, { entries: _this2.props.entries, fetching: _this2.props.fetching, toggleGoing: _this2.props.toggleGoing, error: _this2.props.error }));
+                            } }),
+                        _react2.default.createElement(_reactRouterDom.Route, { component: _NotFound2.default })
+                    )
                 ),
-                _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: this.testRoute(), render: function render(props) {
-                        return _react2.default.createElement(_Footer2.default, props);
-                    } })
+                _react2.default.createElement(_Footer2.default, null)
             );
         }
     }]);
@@ -26350,7 +26337,9 @@ var Layout = function (_Component) {
     return Layout;
 }(_react.Component);
 
-// application store state
+// <Route exact path={this.testRoute()} render={(props) => { return <Footer {...props} />; }} />
+
+// application store state (props)
 
 
 function mapStateToProps(state) {
@@ -26367,7 +26356,8 @@ function mapDispatchToProps(dispatch) {
     return (0, _redux.bindActionCreators)({
         fetchEntries: _entriesActions.fetchEntries,
         toggleGoing: _entriesActions.toggleGoing,
-        fetchSearchInput: _inputsActions.fetchSearchInput
+        fetchSearchInput: _inputsActions.fetchSearchInput,
+        clearSpread: _entriesActions.clearSpread
     }, dispatch);
 }
 
@@ -26385,29 +26375,36 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 exports.default = function (props) {
+    // BUG: bottom bar is popping out of the viewport on Mobile/Tablet
+
     return _react2.default.createElement(
         "div",
-        { className: "footer-copyright", style: {
-                position: "fixed",
-                width: "100%",
-                left: "0",
-                bottom: "0",
-                backgroundColor: "black",
-                opacity: "0.8",
-                color: "white",
-                textAlign: "center",
-                zIndex: "1" } },
-        "Made with ",
+        null,
         _react2.default.createElement(
-            "a",
-            { className: "orange-text text-lighten-3", href: "http://materializecss.com", target: "_blank" },
-            "Materialize"
-        ),
-        " and the ",
-        _react2.default.createElement(
-            "a",
-            { className: "red-text text-lighten-3", href: "https://www.yelp.com/developers", target: "_blank" },
-            "Yelp API"
+            "div",
+            { className: "footer-copyright", style: {
+                    position: "fixed",
+                    bottom: "0",
+                    margin: "0",
+                    padding: "0",
+                    width: "100%",
+                    backgroundColor: "black",
+                    opacity: "0.8",
+                    color: "white",
+                    textAlign: "center",
+                    zIndex: "1" } },
+            "Made with ",
+            _react2.default.createElement(
+                "a",
+                { className: "orange-text text-lighten-3", href: "http://materializecss.com", target: "_blank" },
+                "Materialize"
+            ),
+            " and the ",
+            _react2.default.createElement(
+                "a",
+                { className: "red-text text-lighten-3", href: "https://www.yelp.com/developers", target: "_blank" },
+                "Yelp API"
+            )
         )
     );
 };
@@ -26456,14 +26453,13 @@ var Header = function (_Component) {
         var _this = _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).call(this, props));
 
         _this.updateInputValue = _this.updateInputValue.bind(_this);
-        _this.clearInputValue = _this.clearInputValue.bind(_this);
+        _this.resetSearch = _this.resetSearch.bind(_this);
         return _this;
     }
 
     _createClass(Header, [{
         key: 'componentWillMount',
         value: function componentWillMount() {
-            console.log(this.props.searchInput, '<=======!!!=======>');
             if (this.props.searchInput != "") {
                 this.props.handleSearch();
             }
@@ -26474,9 +26470,10 @@ var Header = function (_Component) {
             this.props.fetchSearchInput(event.target.value);
         }
     }, {
-        key: 'clearInputValue',
-        value: function clearInputValue(event) {
+        key: 'resetSearch',
+        value: function resetSearch() {
             this.props.fetchSearchInput("");
+            this.props.clearSpread();
         }
     }, {
         key: 'render',
@@ -26492,7 +26489,7 @@ var Header = function (_Component) {
                         { className: 'nav-wrapper', style: { display: "block" } },
                         _react2.default.createElement(
                             'a',
-                            { className: 'brand-logo center flow-text', style: { fontWeight: "bold", color: "black", width: "100%" } },
+                            { className: 'brand-logo center flow-text', style: { fontWeight: "bold", color: "black", width: "100%", fontFamily: 'Verdana' } },
                             '~ NIGHTLIFE COORDINATOR ~'
                         )
                     )
@@ -26502,25 +26499,25 @@ var Header = function (_Component) {
                     { className: 'row', style: { margin: "1% auto 0 auto" } },
                     _react2.default.createElement(
                         'div',
-                        { className: 'col s12 push-s2' },
+                        { className: 'col s12 push-l2 push-m3 push-s3' },
                         _react2.default.createElement(
                             'p',
-                            { className: 'col s2 red-text' },
+                            { className: 'col s3 m2 l2 red-text' },
                             _react2.default.createElement('i', { className: 'fa fa-glass fa-4x' })
                         ),
                         _react2.default.createElement(
                             'p',
-                            { className: 'col s2 red-text text-accent-2' },
+                            { className: 'col s3 m2 l2 red-text text-accent-2' },
                             _react2.default.createElement('i', { className: 'fa fa-car fa-4x' })
                         ),
                         _react2.default.createElement(
                             'p',
-                            { className: 'col s2 red-text text-accent-2' },
+                            { className: 'col m2 l2 red-text text-accent-2 hide-on-small-only' },
                             _react2.default.createElement('i', { className: 'fa fa-map-marker fa-4x' })
                         ),
                         _react2.default.createElement(
                             'p',
-                            { className: 'col s2 red-text text-accent-3' },
+                            { className: 'col l2 red-text text-accent-3 hide-on-med-and-down' },
                             _react2.default.createElement('i', { className: 'fa fa-beer fa-4x' })
                         )
                     )
@@ -26533,22 +26530,26 @@ var Header = function (_Component) {
                         { className: 'row', style: { marginTop: "1%", paddingTop: "2%" } },
                         _react2.default.createElement(
                             'div',
-                            { className: 'col s1 right-align' },
-                            _react2.default.createElement('i', _defineProperty({ className: 'fa fa-search fa-2x', style: { margin: "0" }, onClick: this.props.handleSearch }, 'style', { cursor: "pointer" }))
+                            { className: 'col l1 hide-on-med-and-down right-align' },
+                            _react2.default.createElement(
+                                _reactRouterDom.Link,
+                                { to: '/search', style: { color: "black" } },
+                                _react2.default.createElement('i', _defineProperty({ className: 'fa fa-search fa-2x', style: { margin: "0" }, onClick: this.props.handleSearch }, 'style', { cursor: "pointer" }))
+                            )
                         ),
                         _react2.default.createElement(
                             'div',
-                            { className: 'col s1 center-align' },
-                            _react2.default.createElement('i', { className: 'fa fa-times fa-2x', onClick: this.clearInputValue, style: { cursor: "pointer" } })
+                            { className: 'col s2 m2 l1 center-align' },
+                            _react2.default.createElement('i', { className: 'fa fa-times fa-2x', onClick: this.resetSearch, style: { cursor: "pointer" } })
                         ),
                         _react2.default.createElement(
                             'div',
-                            { className: 'col s7' },
+                            { className: 'col s8 m8 l7' },
                             _react2.default.createElement('input', { style: { border: "1px solid black", marginTop: "-1%", borderRadius: "2px", textAlign: "center" }, value: this.props.searchInput, type: 'search', name: 'search', id: 'search', onChange: this.updateInputValue })
                         ),
                         _react2.default.createElement(
                             'div',
-                            { className: 'col s3' },
+                            { className: 'col l3 hide-on-med-and-down' },
                             _react2.default.createElement(
                                 _reactRouterDom.Link,
                                 { to: '/search', style: { marginLeft: "3%" } },
@@ -26562,6 +26563,15 @@ var Header = function (_Component) {
                                         'send'
                                     )
                                 )
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'col s2 m2 show-on-med-and-down hide-on-large-only center-align' },
+                            _react2.default.createElement(
+                                _reactRouterDom.Link,
+                                { to: '/search', style: { color: "black" } },
+                                _react2.default.createElement('i', _defineProperty({ className: 'fa fa-search fa-2x', style: { margin: "0" }, onClick: this.props.handleSearch }, 'style', { cursor: "pointer" }))
                             )
                         )
                     )
@@ -26589,7 +26599,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = function (props) {
     return _react2.default.createElement(
         "div",
-        { className: "icon-block" },
+        { className: "icon-block", style: { marginTop: "10%" } },
         _react2.default.createElement(
             "h2",
             { className: "center black-text" },
@@ -26603,7 +26613,7 @@ exports.default = function (props) {
         _react2.default.createElement(
             "p",
             { className: "light center" },
-            "Use the search bar above to search for local bars"
+            "Use the above search bar to search for local bars"
         )
     );
 };
@@ -26660,6 +26670,10 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _Main = __webpack_require__(129);
+
+var _Main2 = _interopRequireDefault(_Main);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -26667,6 +26681,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/* global $ */
 
 var Spread = function (_Component) {
     _inherits(Spread, _Component);
@@ -26678,13 +26694,42 @@ var Spread = function (_Component) {
     }
 
     _createClass(Spread, [{
-        key: "handleGoing",
+        key: 'handleGoing',
         value: function handleGoing(index, event) {
-            console.log(index, event);
             this.props.toggleGoing(event.target.id, this.props.entries, index);
         }
     }, {
-        key: "render",
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            window.addEventListener('resize', this.responsiveCheck);
+            if (document.querySelector(".card")) this.responsiveCheck();
+        }
+    }, {
+        key: 'componentDidUpdate',
+        value: function componentDidUpdate() {
+            if (document.querySelector(".card")) this.responsiveCheck();
+        }
+    }, {
+        key: 'responsiveCheck',
+        value: function responsiveCheck() {
+            if ($(window).width() < 701) {
+                $(".card").removeClass('horizontal');
+                document.querySelectorAll(".card img").forEach(function (element) {
+                    Object.assign(element.style, {
+                        borderRightStyle: "none"
+                    });
+                });
+            } else {
+                $(".card").addClass('horizontal');
+                document.querySelectorAll(".card img").forEach(function (element) {
+                    Object.assign(element.style, {
+                        borderRightStyle: "3px solid #e57373"
+                    });
+                });
+            }
+        }
+    }, {
+        key: 'render',
         value: function render() {
             var _this2 = this;
 
@@ -26704,62 +26749,60 @@ var Spread = function (_Component) {
 
                 var spread = this.props.entries.map(function (entry, i) {
                     return _react2.default.createElement(
-                        "div",
-                        { className: "col s12", id: entry.id, key: entry.id },
+                        'div',
+                        { className: 'col s12', id: entry.id, key: entry.id },
                         _react2.default.createElement(
-                            "div",
-                            { className: "card blue-grey darken-1 horizontal", style: { border: "3px solid #e57373" } },
+                            'div',
+                            { className: 'card blue-grey darken-1 horizontal', style: { border: "3px solid #e57373" } },
                             _react2.default.createElement(
-                                "div",
-                                { className: "card-image" },
-                                _react2.default.createElement("img", { src: entry.image, alt: "No picture available...", height: "300", style: { minWidth: "400px", maxWidth: "400px", border: "3px solid #e57373", borderTopStyle: "none", borderLeftStyle: "none", borderBottomStyle: "none" } })
+                                'div',
+                                { className: 'card-image' },
+                                _react2.default.createElement('img', { src: entry.image, alt: 'No picture available...', className: 'responsive-img' })
                             ),
                             _react2.default.createElement(
-                                "div",
-                                { className: "card-stacked" },
+                                'div',
+                                { className: 'card-stacked' },
                                 _react2.default.createElement(
-                                    "div",
-                                    { className: "card-title white-text", style: { marginLeft: '10%' } },
+                                    'div',
+                                    { className: 'card-title white-text', style: { marginLeft: '10%' } },
                                     _react2.default.createElement(
-                                        "p",
+                                        'p',
                                         null,
-                                        entry.name
+                                        entry.name.length <= 32 ? entry.name : entry.name.toString().substring(0, 32) + '...'
                                     )
                                 ),
                                 _react2.default.createElement(
-                                    "div",
-                                    { className: "card-content white-text", style: { fontStyle: 'italic' } },
+                                    'div',
+                                    { className: 'card-content white-text', style: { fontStyle: 'italic' } },
                                     _react2.default.createElement(
-                                        "p",
+                                        'p',
                                         null,
-                                        entry.review
+                                        entry.review ? entry.review : "No review available..."
                                     )
                                 ),
                                 _react2.default.createElement(
-                                    "a",
-                                    { className: "waves-effect waves-light btn", id: entry.id, onClick: _this2.handleGoing.bind(_this2, i) },
+                                    'a',
+                                    { className: 'waves-effect waves-light btn', id: entry.id, style: { width: "100%" }, onClick: _this2.handleGoing.bind(_this2, i) },
                                     _react2.default.createElement(
-                                        "i",
-                                        { className: "material-icons left" },
-                                        "accessibility"
+                                        'i',
+                                        { className: 'material-icons left' },
+                                        'accessibility'
                                     ),
                                     entry.going,
-                                    " GOING",
+                                    ' GOING',
                                     _react2.default.createElement(
-                                        "i",
-                                        { className: "material-icons right" },
-                                        "accessibility"
+                                        'i',
+                                        { className: 'material-icons right' },
+                                        'accessibility'
                                     )
                                 ),
                                 _react2.default.createElement(
-                                    "div",
-                                    { className: "card-action" },
+                                    'div',
+                                    { className: 'card-action' },
                                     _react2.default.createElement(
-                                        "a",
+                                        'a',
                                         { href: entry.url },
-                                        "learn more about ",
-                                        entry.name,
-                                        "!"
+                                        'click here to learn more!'
                                     )
                                 )
                             )
@@ -26768,56 +26811,58 @@ var Spread = function (_Component) {
                 });
 
                 return _react2.default.createElement(
-                    "div",
+                    'div',
                     null,
                     _react2.default.createElement(
-                        "h5",
+                        'h5',
                         null,
                         this.props.entries.length,
-                        " Search Results"
+                        ' Search Results'
                     ),
                     _react2.default.createElement(
-                        "ul",
+                        'ul',
                         null,
                         spread
                     )
                 );
             } else {
-                if (!this.props.error) {
+                if (!this.props.error && this.props.fetching) {
                     return _react2.default.createElement(
-                        "div",
-                        { className: "preloader-wrapper big active", style: { marginTop: "10%", display: "block", margin: "10% auto 0 auto" } },
+                        'div',
+                        { className: 'preloader-wrapper big active', style: { marginTop: "10%", display: "block", margin: "10% auto 0 auto" } },
                         _react2.default.createElement(
-                            "div",
-                            { className: "spinner-layer spinner-blue" },
+                            'div',
+                            { className: 'spinner-layer spinner-blue' },
                             _react2.default.createElement(
-                                "div",
-                                { className: "circle-clipper left" },
-                                _react2.default.createElement("div", { className: "circle" })
+                                'div',
+                                { className: 'circle-clipper left' },
+                                _react2.default.createElement('div', { className: 'circle' })
                             ),
                             _react2.default.createElement(
-                                "div",
-                                { className: "gap-patch" },
-                                _react2.default.createElement("div", { className: "circle" })
+                                'div',
+                                { className: 'gap-patch' },
+                                _react2.default.createElement('div', { className: 'circle' })
                             ),
                             _react2.default.createElement(
-                                "div",
-                                { className: "circle-clipper right" },
-                                _react2.default.createElement("div", { className: "circle" })
+                                'div',
+                                { className: 'circle-clipper right' },
+                                _react2.default.createElement('div', { className: 'circle' })
                             )
                         )
                     );
+                } else if (!this.props.fetching) {
+                    return _react2.default.createElement(_Main2.default, null);
                 } else {
                     return _react2.default.createElement(
-                        "div",
-                        { className: "center-align" },
+                        'div',
+                        { className: 'center-align' },
                         _react2.default.createElement(
-                            "h6",
+                            'h6',
                             null,
-                            "Uh oh! Looks like we have a problem..."
+                            'Uh oh! Looks like we have a problem...'
                         ),
                         _react2.default.createElement(
-                            "p",
+                            'p',
                             null,
                             this.props.error
                         )
@@ -26859,6 +26904,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 exports.fetchEntries = fetchEntries;
 exports.toggleGoing = toggleGoing;
+exports.clearSpread = clearSpread;
 
 var _axios = __webpack_require__(133);
 
@@ -26878,46 +26924,52 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function fetchEntries(query) {
     return function (dispatch) {
-        dispatch({ type: 'FETCH_ENTRIES_START' });
+        try {
+            if (navigator.geolocation) {
+                dispatch({ type: 'FETCH_ENTRIES_START' });
 
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function (position) {
-                var latitude = position.coords.latitude.toFixed(0);
-                var longitude = position.coords.longitude.toFixed(0);
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var latitude = position.coords.latitude.toFixed(0),
+                        longitude = position.coords.longitude.toFixed(0);
 
-                _jquery2.default.get('/businesses?latitude=' + latitude + '&longitude=' + longitude + '&term=' + query + '', function (businesses) {
-                    var dataset = [];
+                    if (query) {
+                        _jquery2.default.get('/businesses?latitude=' + latitude + '&longitude=' + longitude + '&term=' + query, function (businesses) {
+                            var dataset = [];
 
-                    if (businesses.length > 0) {
-                        businesses.forEach(function (business, i) {
-                            _jquery2.default.get('/reviews?id=' + business.id + '', function (reviews) {
-                                _axios2.default.get('/going?id=' + business.id).then(function (people) {
-                                    dataset.push({
-                                        id: business.id,
-                                        name: business.name,
-                                        image: business.image_url,
-                                        url: business.url,
-                                        review: reviews[0] != undefined ? reviews[0].text : '...',
-                                        going: +people.data
-                                    });
+                            if (businesses.length > 0) {
+                                Promise.all(businesses.map(function (business) {
+                                    return _axios2.default.get('/reviews?id=' + business.id);
+                                })).then(function (reviews) {
+                                    Promise.all(businesses.map(function (business) {
+                                        return _axios2.default.get('/going?id=' + business.id);
+                                    })).then(function (people) {
+                                        businesses.forEach(function (business, i) {
+                                            return dataset.push({
+                                                id: business.id,
+                                                name: business.name,
+                                                image: business.image_url,
+                                                url: business.url,
+                                                review: reviews[i][0] ? reviews[i][0].text : '',
+                                                going: +people[i].data
+                                            });
+                                        });
 
-                                    if (i == businesses.length - 1) {
                                         dispatch({ type: 'FETCH_ENTRIES_FULFILLED', dataset: dataset });
-                                    }
+                                    }).catch(function (e) {
+                                        throw e;
+                                    });
                                 }).catch(function (error) {
-                                    dispatch({ type: 'FETCH_ENTRIES_ERROR', error: '|==> ' + error });
+                                    dispatch({ type: 'FETCH_ENTRIES_ERROR', error: error });
                                 });
-                            });
+                            } else dispatch({ type: 'FETCH_ENTRIES_FULFILLED', dataset: [] });
                         });
-                    } else {
-                        dispatch({ type: 'FETCH_ENTRIES_FULFILLED', dataset: [] });
-                    }
+                    } else dispatch({ type: 'FETCH_ENTRIES_FULFILLED', dataset: [] });
+                }, function (e) {
+                    throw e;
                 });
-            }, function (error) {
-                dispatch({ type: 'FETCH_ENTRIES_ERROR', error: 'Please enable geolocational tracking in your web browser settings.' });
-            });
-        } else {
-            dispatch({ type: 'FETCH_ENTRIES_ERROR', error: 'Geolocational data is not available in your web browser.' });
+            } else throw 'Geolocational data is not available in your web browser.';
+        } catch (error) {
+            dispatch({ type: 'FETCH_ENTRIES_ERROR', error: error });
         }
     };
 }
@@ -26925,7 +26977,7 @@ function fetchEntries(query) {
 function toggleGoing(businessId, arrayDisplay, index) {
     return function (dispatch) {
         _axios2.default.get('/status').then(function (user) {
-            if (user.data != "" && user.data.twitterId != undefined) {
+            if (user.data != "" && user.data.twitterId) {
                 var willDecrement = user.data.placesGoing.includes(businessId);
                 var newDataset = [];
                 for (var i = 0; i < arrayDisplay.length; i++) {
@@ -26940,24 +26992,17 @@ function toggleGoing(businessId, arrayDisplay, index) {
                 dispatch({ type: willDecrement ? 'TOGGLE_GOING_DECREMENT' : 'TOGGLE_GOING_INCREMENT', newDataset: newDataset });
                 _jquery2.default.post('/input', { type: willDecrement ? 'dec' : 'inc', businessId: businessId });
             } else {
-                dispatch({ type: 'TOGGLE_GOING_LOGIN_START' });
-
                 window.location.href = _config2.default.auth.appURL + '/auth/twitter';
-
-                // need to figure out how to save application state
-                /*
-                axios.get('/auth')
-                .then((result) => {
-                    dispatch({type: 'TOGGLE_GOING_LOGIN_FULFILLED'});
-                })
-                .catch((error) => {
-                    dispatch({type: 'TOGGLE_GOING_LOGIN_ERROR'});
-                });
-                */
             }
         }).catch(function (error) {
             dispatch({ type: 'TOGGLE_GOING_ERROR', error: error });
         });
+    };
+}
+
+function clearSpread() {
+    return function (dispatch) {
+        dispatch({ type: 'CLEAR_SPREAD' });
     };
 }
 

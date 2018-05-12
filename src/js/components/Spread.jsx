@@ -1,13 +1,44 @@
 import React, { Component } from 'react';
 
+import Main from './Main';
+
+/* global $ */
+
 export default class Spread extends Component {
     constructor(props) {
         super(props);
     }
     
     handleGoing(index, event) {
-        console.log(index, event);
         this.props.toggleGoing(event.target.id, this.props.entries, index);
+    }
+    
+    componentDidMount() {
+        window.addEventListener('resize', this.responsiveCheck);
+        if (document.querySelector(".card")) this.responsiveCheck();   
+    }
+    
+    componentDidUpdate() {
+        if (document.querySelector(".card")) this.responsiveCheck();
+    }
+    
+    responsiveCheck() {
+        if ($(window).width() < 701) {
+            $(".card").removeClass('horizontal');
+            document.querySelectorAll(".card img").forEach(element => {
+                Object.assign(element.style, {
+                    borderRightStyle: "none" 
+                });
+            });
+        }
+        else {
+            $(".card").addClass('horizontal');
+            document.querySelectorAll(".card img").forEach(element => {
+                Object.assign(element.style, {
+                    borderRightStyle: "3px solid #e57373" 
+                });
+            });
+        }
     }
     
     render() {
@@ -32,20 +63,20 @@ export default class Spread extends Component {
                     <div className="col s12" id={entry.id} key={entry.id}>
                         <div className="card blue-grey darken-1 horizontal" style={{border: "3px solid #e57373"}}>
                             <div className="card-image">
-                                <img src={entry.image} alt="No picture available..." height="300" style={{minWidth: "400px", maxWidth: "400px", border: "3px solid #e57373", borderTopStyle: "none", borderLeftStyle: "none", borderBottomStyle: "none"}} />
+                                <img src={entry.image} alt="No picture available..." className="responsive-img"/>
                             </div>
                             <div className="card-stacked">
                                 <div className="card-title white-text" style={{marginLeft: '10%'}}>
-                                    <p>{entry.name}</p>
+                                    <p>{entry.name.length <= 32 ? entry.name : `${entry.name.toString().substring(0, 32)}...`}</p>
                                 </div>
                                 <div className="card-content white-text" style={{fontStyle: 'italic'}}>
-                                    <p>{entry.review}</p>
+                                    <p>{ entry.review ? entry.review : "No review available..." }</p>
                                 </div>
-                                <a className="waves-effect waves-light btn" id={entry.id} onClick={this.handleGoing.bind(this, i)}>
+                                <a className="waves-effect waves-light btn" id={entry.id} style={{width: "100%"}} onClick={this.handleGoing.bind(this, i)}>
                                     <i className="material-icons left">accessibility</i>{entry.going} GOING<i className="material-icons right">accessibility</i>
                                 </a>
                                 <div className="card-action">
-                                    <a href={entry.url}>learn more about {entry.name}!</a>
+                                    <a href={entry.url}>click here to learn more!</a>
                                 </div>
                             </div>
                         </div>
@@ -61,7 +92,7 @@ export default class Spread extends Component {
             );
         }
         else {
-            if (!this.props.error) {
+            if (!this.props.error && this.props.fetching) {
                 return (
                     <div className="preloader-wrapper big active" style={{marginTop: "10%", display: "block", margin: "10% auto 0 auto"}}>
                         <div className="spinner-layer spinner-blue">
@@ -75,6 +106,9 @@ export default class Spread extends Component {
                         </div>
                     </div>
                 );
+            }
+            else if (!this.props.fetching) {
+                return <Main />;
             }
             else {
                 return (

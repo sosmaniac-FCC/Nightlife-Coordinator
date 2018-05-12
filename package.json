@@ -5,12 +5,14 @@
   "main": "server.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/johnstonbl01/clementinejs-fcc"
+    "url": "git+https://github.com/sosmaniac-FCC/Nightlife-Coordinator"
   },
   "homepage": "https://nightlife-coordination-attempt-2-sosmaniac.c9users.io",
   "scripts": {
     "dev": "webpack-dev-server --content-base src --inline --hot --port 8080 --host 0.0.0.0",
-    "start": "webpack && node server.js"
+    "sb": "webpack && node server.js",
+    "start": "nodemon server.js",
+    "start:single": "node server.js"
   },
   "author": "John Simmons",
   "license": "MIT",
@@ -35,6 +37,7 @@
     "mongoose": "^4.1.0",
     "morgan": "^1.9.0",
     "node-sass": "^4.7.2",
+    "nodemon": "^1.17.4",
     "passport": "^0.3.0",
     "passport-twitter": "^1.0.4",
     "react": "^16.2.0",
